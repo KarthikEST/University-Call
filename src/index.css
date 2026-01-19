@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 220 20% 6%;
+    --foreground: 0 0% 98%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 220 18% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 113 100% 32%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 60%;
+
+    --accent: 113 100% 32%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 113 100% 32%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 220 18% 8%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 113 100% 32%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 113 100% 32%;
+
+    /* Custom tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(113 100% 32%) 0%, hsl(140 80% 40%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(113 100% 32% / 0.15) 0%, transparent 70%);
+    --shadow-glow: 0 0 60px hsl(113 100% 32% / 0.3);
+    --shadow-card: 0 8px 32px hsl(0 0% 0% / 0.4);
+  }
+
+  .dark {
+    --background: 220 20% 6%;
+    --foreground: 0 0% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Phone input styles - improved design */
+.PhoneInput {
+  @apply flex items-center w-full;
+}
+
+.PhoneInputCountry {
+  @apply flex items-center gap-2 px-4 h-14 bg-secondary border-2 border-border rounded-l-lg cursor-pointer hover:bg-muted transition-colors;
+}
+
+.PhoneInputCountryIcon {
+  @apply w-7 h-5 rounded overflow-hidden shadow-sm;
+}
+
+.PhoneInputCountryIconImg {
+  @apply w-full h-full object-cover;
+}
+
+.PhoneInputCountrySelect {
+  @apply bg-transparent text-foreground text-sm focus:outline-none cursor-pointer appearance-none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  padding-right: 16px;
+}
+
+.PhoneInputCountrySelect option {
+  @apply bg-card text-foreground py-2;
+}
+
+.PhoneInputCountrySelectArrow {
+  @apply hidden;
+}
+
+.PhoneInputInput {
+  @apply flex-1 px-4 h-14 bg-secondary border-2 border-l-0 border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-base font-medium tracking-wide;
+}
+
+/* Country dropdown styling */
+.PhoneInputCountrySelectDropdown {
+  @apply bg-card border border-border rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto;
+}
+
+/* Animation keyframes */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(113 100% 32% / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(113 100% 32% / 0.6);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
