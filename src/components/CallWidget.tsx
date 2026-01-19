@@ -2,17 +2,15 @@ import { useState, useEffect } from "react";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Phone, CheckCircle, User } from "lucide-react";
+import { Phone, CheckCircle } from "lucide-react";
 
 type CallState = "idle" | "calling" | "success" | "error";
 
 interface CallWidgetProps {
-  onCallInitiated?: (phoneNumber: string, name: string) => void;
+  onCallInitiated?: (phoneNumber: string) => void;
 }
 
 export function CallWidget({ onCallInitiated }: CallWidgetProps) {
-  const [name, setName] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [callState, setCallState] = useState<CallState>("idle");
   const [statusMessage, setStatusMessage] = useState<string>("");
@@ -28,7 +26,7 @@ export function CallWidget({ onCallInitiated }: CallWidgetProps) {
     return () => clearInterval(interval);
   }, [callState]);
 
-  const initiateCall = async (number: string, customerName: string) => {
+  const initiateCall = async (number: string) => {
     setCallState("calling");
     setCallDuration(0);
 
@@ -40,7 +38,7 @@ export function CallWidget({ onCallInitiated }: CallWidgetProps) {
           phoneNumber: number,
           campaignId: "TestCampaign",
           listId: "123",
-          customer_name: customerName,
+          customer_name: "rohith",
         }),
       });
 
@@ -54,7 +52,7 @@ export function CallWidget({ onCallInitiated }: CallWidgetProps) {
       console.log("Call triggered:", data);
       setCallState("success");
       setStatusMessage("Call initiated successfully!");
-      onCallInitiated?.(number, customerName);
+      onCallInitiated?.(number);
     } catch (error) {
       console.error("Error initiating call:", error);
       setCallState("error");
@@ -63,22 +61,16 @@ export function CallWidget({ onCallInitiated }: CallWidgetProps) {
   };
 
   const handleCallNow = async () => {
-    if (!name.trim()) {
-      setStatusMessage("Please enter your name.");
-      return;
-    }
-
     if (!phoneNumber || !isValidPhoneNumber(phoneNumber)) {
       setStatusMessage("Please enter a valid phone number.");
       return;
     }
 
     setStatusMessage("Initiating call...");
-    await initiateCall(phoneNumber, name.trim());
+    await initiateCall(phoneNumber);
   };
 
   const handleReset = () => {
-    setName("");
     setPhoneNumber("");
     setCallState("idle");
     setStatusMessage("");
@@ -92,9 +84,7 @@ export function CallWidget({ onCallInitiated }: CallWidgetProps) {
           <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-8 h-8 text-primary" />
           </div>
-          <h3 className="text-xl font-semibold text-foreground mb-2">
-            Thank you, {name}!
-          </h3>
+          <h3 className="text-xl font-semibold text-foreground mb-2">Thank you for contacting!</h3>
           <p className="text-muted-foreground mb-6">Our team will connect with you shortly.</p>
           <Button variant="outline" onClick={handleReset}>
             Make Another Call
@@ -106,39 +96,23 @@ export function CallWidget({ onCallInitiated }: CallWidgetProps) {
 
   return (
     <div className="w-full max-w-lg mx-auto animate-fade-in-up">
-      <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 shadow-card border border-border/50">
+      <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-4 shadow-card border border-border/50">
         {callState === "idle" ? (
-          <div className="space-y-4">
-            {/* Name Input */}
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                <User className="w-5 h-5" />
-              </div>
-              <Input
-                type="text"
-                placeholder="Your Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="pl-11 h-14 text-base"
+          <div className="space-y-3">
+            {/* Phone Input Row */}
+            <div className="flex items-stretch">
+              <PhoneInput
+                international
+                defaultCountry="IN"
+                countryCallingCodeEditable={false}
+                value={phoneNumber}
+                onChange={(value) => setPhoneNumber(value || "")}
+                className="flex-1"
               />
-            </div>
-
-            {/* Phone Input with Call Button */}
-            <div className="flex items-stretch gap-2">
-              <div className="flex-1">
-                <PhoneInput
-                  international
-                  defaultCountry="IN"
-                  countryCallingCodeEditable={false}
-                  value={phoneNumber}
-                  onChange={(value) => setPhoneNumber(value || "")}
-                  className="phone-input-custom"
-                />
-              </div>
               <Button
                 onClick={handleCallNow}
-                disabled={!phoneNumber || !name.trim()}
-                className="h-14 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase tracking-wider text-sm shadow-lg hover:shadow-primary/30 transition-all"
+                disabled={!phoneNumber}
+                className="h-14 rounded-l-none rounded-r-lg px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase tracking-wider text-sm shadow-lg hover:shadow-primary/30 transition-all"
               >
                 <Phone className="w-4 h-4 mr-2" />
                 Call Now
@@ -164,7 +138,7 @@ export function CallWidget({ onCallInitiated }: CallWidgetProps) {
         {statusMessage && callState === "idle" && (
           <p
             className={`text-sm text-center mt-3 ${
-              statusMessage.includes("Error") || statusMessage.includes("valid") || statusMessage.includes("enter")
+              statusMessage.includes("Error") || statusMessage.includes("Invalid") || statusMessage.includes("valid")
                 ? "text-destructive"
                 : "text-primary"
             }`}
@@ -173,13 +147,6 @@ export function CallWidget({ onCallInitiated }: CallWidgetProps) {
           </p>
         )}
       </div>
-
-      <style>{`
-        .phone-input-custom input {
-          height: 3.5rem;
-          font-size: 1rem;
-        }
-      `}</style>
     </div>
   );
 }
